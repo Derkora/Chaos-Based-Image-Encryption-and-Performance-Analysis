@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaos-Based Encryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        .results img {
+            max-width: 100%;
+            margin: 10px 0;
+        }
+        .results {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chaos-Based Encryption</h1>
+        <p>Pilih gambar untuk diproses menggunakan dua algoritma berbasis chaos.</p>
+        <input type="file" id="imageInput" accept="image/*">
+        <button id="submitBtn">Proses Gambar</button>
+        
+        <div class="results">
+            <h2>Hasil Algoritma 1 (Henon Map)</h2>
+            <img id="output1" alt="Hasil Algoritma 1">
+            <h3>Kinerja Algoritma 1:</h3>
+            <pre id="performance1"></pre>
+            
+            <h2>Hasil Algoritma 2 (Rossler Attractor)</h2>
+            <img id="output2" alt="Hasil Algoritma 2">
+            <h3>Kinerja Algoritma 2:</h3>
+            <pre id="performance2"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('imageInput');
+            const resultsDiv = document.querySelector('.results');
+            if (!fileInput.files.length) {
+                alert("Pilih gambar terlebih dahulu.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('output1').src = `data:image/png;base64,${data.algorithm1.image}`;
+                    document.getElementById('performance1').textContent = JSON.stringify(data.algorithm1.performance, null, 2);
+
+                    document.getElementById('output2').src = `data:image/png;base64,${data.algorithm2.image}`;
+                    document.getElementById('performance2').textContent = JSON.stringify(data.algorithm2.performance, null, 2);
+
+                    resultsDiv.style.display = 'block';
+                } else {
+                    alert("Terjadi kesalahan saat memproses gambar.");
+                }
+            } catch (error) {
+                alert("Gagal menghubungi server. Pastikan server Flask berjalan.");
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
