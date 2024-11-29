@@ -7,53 +7,95 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
         }
+
         .container {
-            max-width: 600px;
+            max-width: 900px;
             margin: auto;
-            border: 1px solid #ccc;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .input-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f4f4f4;
+            border-radius: 10px;
+        }
+
+        .results-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .result {
+            flex: 1;
             padding: 20px;
+            border: 1px solid #ccc;
             border-radius: 10px;
             box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-        input[type="file"] {
-            margin: 10px 0;
-        }
-        .results img {
+
+        .result img {
             max-width: 100%;
-            margin: 10px 0;
-        }
-        .results {
-            display: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Chaos-Based Encryption</h1>
-        <p>Pilih gambar untuk diproses menggunakan dua algoritma berbasis chaos.</p>
-        <input type="file" id="imageInput" accept="image/*">
-        <button id="submitBtn">Proses Gambar</button>
-        
-        <div class="results">
-            <h2>Hasil Algoritma 1 (Henon Map)</h2>
-            <img id="output1" alt="Hasil Algoritma 1">
-            <h3>Kinerja Algoritma 1:</h3>
-            <pre id="performance1"></pre>
-            
-            <h2>Hasil Algoritma 2 (Rossler Attractor)</h2>
-            <img id="output2" alt="Hasil Algoritma 2">
-            <h3>Kinerja Algoritma 2:</h3>
-            <pre id="performance2"></pre>
+        <!-- Bagian Atas -->
+        <div class="input-section">
+            <h1>Chaos-Based Encryption</h1>
+            <p>Pilih gambar untuk diproses menggunakan dua algoritma berbasis chaos.</p>
+            <input type="file" id="imageInput" accept="image/*">
+            <button id="submitBtn">Proses Gambar</button>
+            <br>
+            <img id="originalImage" alt="Gambar Asli" style="margin-top: 10px; max-width: 100%; display: none;">
+        </div>
+
+        <!-- Bagian Hasil -->
+        <div class="results-container">
+            <div class="result">
+                <h2>Hasil Algoritma 1</h2>
+                <img id="output1" alt="Hasil Algoritma 1">
+                <h3>Kinerja Algoritma 1:</h3>
+                <pre id="performance1"></pre>
+            </div>
+            <div class="result">
+                <h2>Hasil Algoritma 2</h2>
+                <img id="output2" alt="Hasil Algoritma 2">
+                <h3>Kinerja Algoritma 2:</h3>
+                <pre id="performance2"></pre>
+            </div>
         </div>
     </div>
 
     <script>
+        document.getElementById('imageInput').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const originalImage = document.getElementById('originalImage');
+                    originalImage.src = e.target.result;
+                    originalImage.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         document.getElementById('submitBtn').addEventListener('click', async () => {
             const fileInput = document.getElementById('imageInput');
-            const resultsDiv = document.querySelector('.results');
             if (!fileInput.files.length) {
                 alert("Pilih gambar terlebih dahulu.");
                 return;
@@ -75,8 +117,6 @@
 
                     document.getElementById('output2').src = `data:image/png;base64,${data.algorithm2.image}`;
                     document.getElementById('performance2').textContent = JSON.stringify(data.algorithm2.performance, null, 2);
-
-                    resultsDiv.style.display = 'block';
                 } else {
                     alert("Terjadi kesalahan saat memproses gambar.");
                 }
