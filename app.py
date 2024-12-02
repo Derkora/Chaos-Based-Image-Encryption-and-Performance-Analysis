@@ -4,8 +4,8 @@ from PIL import Image
 import base64
 import io
 import time
-import algorithm1  # Henon Map
-import algorithm2  # Rossler Attractor
+import algHenon  # Henon Map
+import algRossler  # Rossler Attractor
 
 app = Flask(__name__)
 CORS(app)
@@ -28,24 +28,24 @@ def process_image():
         if img.size[0] < 64 or img.size[1] < 64:
             return jsonify({"error": "Image size must be at least 64x64 pixels"}), 400
 
-        # Proses dengan Algoritma 1
+        # Proses dengan Henon Map
         start = time.time()
-        algo1_result, algo1_perf = algorithm1.process(img)
-        algo1_perf["time"] = time.time() - start
+        henon_result, henon_perf = algHenon.process(img)
+        henon_perf["time"] = time.time() - start
 
-        # Proses dengan Algoritma 2
+        # Proses dengan Rossler Attractor
         start = time.time()
-        algo2_result, algo2_perf = algorithm2.process(img)
-        algo2_perf["time"] = time.time() - start
+        rossler_result, rossler_perf = algRossler.process(img)
+        rossler_perf["time"] = time.time() - start
 
         return jsonify({
-            "algorithm1": {
-                "image": image_to_base64(algo1_result),
-                "performance": algo1_perf
+            "henon": {
+                "image": image_to_base64(henon_result),
+                "performance": henon_perf
             },
-            "algorithm2": {
-                "image": image_to_base64(algo2_result),
-                "performance": algo2_perf
+            "rossler": {
+                "image": image_to_base64(rossler_result),
+                "performance": rossler_perf
             }
         })
     except Exception as e:

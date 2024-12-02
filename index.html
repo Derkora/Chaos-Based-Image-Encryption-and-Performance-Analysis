@@ -10,29 +10,48 @@
             padding: 20px;
             margin: 0;
             box-sizing: border-box;
+            background-color: #f9f9f9;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 700px;
             margin: auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
             text-align: center;
+            color: #333;
+        }
+
+        .original-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
         }
 
         .input-section {
             text-align: center;
             margin-bottom: 20px;
+        }
+
+        .input-section input,
+        .input-section button {
+            margin: 10px 0;
             padding: 10px;
-            background: #f4f4f4;
-            border-radius: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
         }
 
         .results-container {
-            display: flex;
             justify-content: space-between;
             gap: 20px;
+            display: none;
         }
 
         .result {
@@ -49,33 +68,43 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .result {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Bagian Atas -->
         <div class="input-section">
             <h1>Chaos-Based Encryption</h1>
-            <p>Pilih gambar untuk diproses menggunakan dua algoritma berbasis chaos.</p>
+            <p>Unggah gambar untuk diproses dengan algoritma berbasis chaos.</p>
             <input type="file" id="imageInput" accept="image/*">
             <button id="submitBtn">Proses Gambar</button>
-            <br>
-            <img id="originalImage" alt="Gambar Asli" style="margin-top: 10px; max-width: 100%; display: none;">
+            <div class="original-image">
+                <img id="originalImage" alt="Gambar Asli" style="width: 50%; display: none;">
+            </div>
+            <div class="error-message" id="errorMessage"></div>
         </div>
 
-        <!-- Bagian Hasil -->
-        <div class="results-container">
+        <div class="results-container" id="resultsContainer">
             <div class="result">
-                <h2>Hasil Algoritma 1</h2>
-                <img id="output1" alt="Hasil Algoritma 1">
-                <h3>Kinerja Algoritma 1:</h3>
-                <pre id="performance1"></pre>
+                <h3>Henon Map</h3>
+                <img id="output1" src="placeholder.png" alt="Hasil Henon Map">
+                <pre id="performance1">Kinerja belum tersedia.</pre>
             </div>
             <div class="result">
-                <h2>Hasil Algoritma 2</h2>
-                <img id="output2" alt="Hasil Algoritma 2">
-                <h3>Kinerja Algoritma 2:</h3>
-                <pre id="performance2"></pre>
+                <h3>Rossler Attractor</h3>
+                <img id="output2" src="placeholder.png" alt="Hasil Rossler Attractor">
+                <pre id="performance2">Kinerja belum tersedia.</pre>
             </div>
         </div>
     </div>
@@ -96,8 +125,12 @@
 
         document.getElementById('submitBtn').addEventListener('click', async () => {
             const fileInput = document.getElementById('imageInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const resultsContainer = document.getElementById('resultsContainer');
+            errorMessage.textContent = "";
+
             if (!fileInput.files.length) {
-                alert("Pilih gambar terlebih dahulu.");
+                errorMessage.textContent = "Harap pilih gambar terlebih dahulu.";
                 return;
             }
 
@@ -112,16 +145,20 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    document.getElementById('output1').src = `data:image/png;base64,${data.algorithm1.image}`;
-                    document.getElementById('performance1').textContent = JSON.stringify(data.algorithm1.performance, null, 2);
+                    document.getElementById('output1').src = `data:image/png;base64,${data.henon.image}`;
+                    document.getElementById('performance1').textContent = JSON.stringify(data.henon.performance, null, 2);
 
-                    document.getElementById('output2').src = `data:image/png;base64,${data.algorithm2.image}`;
-                    document.getElementById('performance2').textContent = JSON.stringify(data.algorithm2.performance, null, 2);
+                    document.getElementById('output2').src = `data:image/png;base64,${data.rossler.image}`;
+                    document.getElementById('performance2').textContent = JSON.stringify(data.rossler.performance, null, 2);
+
+                    // Menampilkan hasil setelah pemrosesan selesai
+                    resultsContainer.style.display = 'flex';
                 } else {
-                    alert("Terjadi kesalahan saat memproses gambar.");
+                    const errorData = await response.json();
+                    errorMessage.textContent = errorData.error || "Terjadi kesalahan.";
                 }
             } catch (error) {
-                alert("Gagal menghubungi server. Pastikan server Flask berjalan.");
+                errorMessage.textContent = "Tidak dapat terhubung ke server. Pastikan server berjalan.";
                 console.error(error);
             }
         });
