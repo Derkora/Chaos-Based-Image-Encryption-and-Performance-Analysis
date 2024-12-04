@@ -30,22 +30,22 @@ def process_image():
 
         # Proses dengan Henon Map
         start = time.time()
-        henon_result, henon_perf = algHenon.process(img)
-        henon_perf["time"] = time.time() - start
+        henon_result = algHenon.process(img)
+        henon_time = time.time() - start
 
         # Proses dengan Rossler Attractor
         start = time.time()
-        rossler_result, rossler_perf = algRossler.process(img)
-        rossler_perf["time"] = time.time() - start
+        rossler_result = algRossler.process(img)
+        rossler_time = time.time() - start
 
         return jsonify({
             "henon": {
                 "image": image_to_base64(henon_result),
-                "performance": henon_perf
+                "time": henon_time
             },
             "rossler": {
                 "image": image_to_base64(rossler_result),
-                "performance": rossler_perf
+                "time": rossler_time
             }
         })
     except Exception as e:

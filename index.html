@@ -99,12 +99,12 @@
             <div class="result">
                 <h3>Henon Map</h3>
                 <img id="output1" src="placeholder.png" alt="Hasil Henon Map">
-                <pre id="performance1">Kinerja belum tersedia.</pre>
+                <pre id="henonTime">Kinerja belum tersedia.</pre>
             </div>
             <div class="result">
                 <h3>Rossler Attractor</h3>
                 <img id="output2" src="placeholder.png" alt="Hasil Rossler Attractor">
-                <pre id="performance2">Kinerja belum tersedia.</pre>
+                <pre id="rosslerTime">Kinerja belum tersedia.</pre>
             </div>
         </div>
     </div>
@@ -146,10 +146,10 @@
                 if (response.ok) {
                     const data = await response.json();
                     document.getElementById('output1').src = `data:image/png;base64,${data.henon.image}`;
-                    document.getElementById('performance1').textContent = JSON.stringify(data.henon.performance, null, 2);
+                    document.getElementById('henonTime').textContent = `Processing Time: ${data.henon.time} seconds`;
 
                     document.getElementById('output2').src = `data:image/png;base64,${data.rossler.image}`;
-                    document.getElementById('performance2').textContent = JSON.stringify(data.rossler.performance, null, 2);
+                    document.getElementById('rosslerTime').textContent = `Processing Time: ${data.rossler.time} seconds`;
 
                     // Menampilkan hasil setelah pemrosesan selesai
                     resultsContainer.style.display = 'flex';

@@ -21,9 +21,5 @@ def process(image):
     prng = henon_map_prng(img_array.size)
     key = prng.reshape(img_array.shape)
     encrypted = np.bitwise_xor(img_array, key) # XOR
-    perf_metrics = {
-        "key_min": int(key.min()),
-        "key_max": int(key.max()),
-        "key_mean": float(key.mean())
-    }
-    return Image.fromarray(encrypted), perf_metrics
+
+    return Image.fromarray(encrypted)

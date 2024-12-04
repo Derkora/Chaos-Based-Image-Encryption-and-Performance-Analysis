@@ -48,4 +48,4 @@ Akses UI di browser pada `http://127.0.0.1:8000`.
 - Statistik kinerja algoritma (waktu proses, nilai kunci) tersedia untuk analisis lebih lanjut.
 
 ## Hasil
-![hasil](/img/hasil.png)
+![hasil](/img/z-hasil.png)
